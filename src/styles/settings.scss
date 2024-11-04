@@ -1,0 +1,22 @@
+/**
+ * src/styles/settings.scss
+ *
+ * Configures SASS variables and Vuetify overwrites
+ */
+
+ @import './scss/variables';
+ @import './scss/override';
+ @import './scss/layout/container';
+ @import './scss/layout/sidebar';
+ 
+ @import './scss/components/VButtons';
+ @import './scss/components/VCard';
+ @import './scss/components/VField';
+ @import './scss/components/VInput';
+ @import './scss/components/VNavigationDrawer';
+ @import './scss/components/VShadow';
+ @import './scss/components/VTextField';
+ @import './scss/components/VTabs';
+ 
+ @import 'vue3-perfect-scrollbar/style.css';
+ 
