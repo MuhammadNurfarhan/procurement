@@ -2,14 +2,22 @@ import * as VueRouter from "vue-router";
 
 const constantRoutes: VueRouter.RouteRecordRaw[] = [
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/login/index.vue"),
-  },
-  {
     path: "/",
     name: "Home",
     component: () => import("@/views/home/index.vue"),
+    meta: {
+      public: true,
+    },
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/auth/Login.vue"),
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("@/views/auth/Register.vue"),
   },
   {
     path: "/404",
