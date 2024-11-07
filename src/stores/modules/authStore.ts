@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   const clearUserData = () => {
     // role.value = null;
     token.value = null;
-    localStorage.removeItem('role');
+    // localStorage.removeItem('role');
     localStorage.removeItem('token');
   };
 
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
         password,
       });
 
-      setUserData(response.data.token);
+      setUserData({ token: response.data.token });
       router.push('/');
     } catch (error) {
       console.error(error);

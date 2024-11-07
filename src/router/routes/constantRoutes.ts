@@ -10,6 +10,15 @@ const constantRoutes: VueRouter.RouteRecordRaw[] = [
     },
   },
   {
+    path: '/procurement/:id',
+    name: 'ProcurementDetail',
+    component: () => import("@/views/procurement/ProcurementDetail.vue"),
+    props: true,  // Kirimkan id sebagai prop
+    meta: {
+      public: true,
+    },
+  },
+  {
     path: "/login",
     name: "Login",
     component: () => import("@/views/auth/Login.vue"),

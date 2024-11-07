@@ -8,7 +8,7 @@ const authStore = useAuthStore();
 const procurementStore = useProcurementStore();
 
 // Akses state dan aksi dari store
-const isLoggedIn = computed(() => authStore.login);
+const isLoggedIn = computed(() => !!authStore.token);
 const procurements = computed(() => procurementStore.procurements);
 
 // Mengatur tab aktif
@@ -46,8 +46,9 @@ onMounted(() => {
         <v-tabs-window-item>
           <v-data-table :items="procurements" :headers="headers">
             <template v-slot:[`item.actions`]="{ item }">
-              <v-btn color="success" v-if="isLoggedIn" @click="offerBid(item.id, item.bids)">Tawar</v-btn>
-              <span v-else>Login untuk menawar</span>
+              <v-btn color="success" v-if="isLoggedIn" @click="offerBid(item.id, item.bids)">Bid</v-btn>
+              <span class="text-disabled mr-2" v-else>Login to Bid</span>
+              <v-btn color="primary" :to="`/procurement/${item.id}`">Detail</v-btn>
             </template>
           </v-data-table>
         </v-tabs-window-item>

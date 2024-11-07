@@ -1,6 +1,4 @@
-// src/stores/procurementStore.ts
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
 
 // Definisikan tipe untuk procurement dan bid agar tipe data lebih ketat
 interface Procurement {
@@ -8,6 +6,7 @@ interface Procurement {
   name: string;
   date: string;
   isClosed: boolean;
+  description?: string;
   bids?: Array<Bid>;
 }
 
@@ -51,11 +50,16 @@ export const useProcurementStore = defineStore('procurement', () => {
     }
   };
 
+  const getProcurementById = (id: number): Procurement | undefined => {
+    return procurements.value.find(procurement => procurement.id === id);
+  };
+
   return {
     procurements,
     openProcurements,
     fetchProcurements,
     closeProcurement,
     offerBid,
+    getProcurementById,
   };
 });
