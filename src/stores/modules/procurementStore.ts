@@ -4,9 +4,8 @@ import { defineStore } from 'pinia';
 interface Procurement {
   id: number;
   name: string;
-  date: string;
+  expirationDate: string;
   isClosed: boolean;
-  description?: string;
   bids?: Array<Bid>;
 }
 
@@ -29,8 +28,8 @@ export const useProcurementStore = defineStore('procurement', () => {
   const fetchProcurements = () => {
     // Contoh data mock untuk simulasi fetch data
     procurements.value = [
-      { id: 1, name: 'Pengadaan Komputer', date: '2023-10-01', isClosed: false },
-      { id: 2, name: 'Pengadaan Meja Kantor', date: '2023-10-02', isClosed: true },
+      { id: 1, name: 'Pengadaan Komputer', expirationDate: '2024-12-01', isClosed: false },
+      { id: 2, name: 'Pengadaan Meja Kantor', expirationDate: '2023-10-02', isClosed: true },
     ];
   };
 

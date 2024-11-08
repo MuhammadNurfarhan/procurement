@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '@/stores/modules/authStore';
 import { useProcurementStore } from '@/stores/modules/procurementStore';
+import DialogProcurement from './components/DialogProcurement.vue';
 import Navbar from '@/components/Navbar.vue';
 
 // Inisialisasi store
@@ -11,12 +12,18 @@ const procurementStore = useProcurementStore();
 const isLoggedIn = computed(() => !!authStore.token);
 const procurements = computed(() => procurementStore.procurements);
 
-// Mengatur tab aktif
-const tab = ref(0);
+const state = reactive({
+  tab: 0,
+  showDialog: false,
+  dialogAction: {
+    type: "create",
+    data: {},
+  }
+})
 
-const headers = [
+const tableHeaders: any = [
   { title: 'Request Name', key: 'name' },
-  { title: 'Date', key: 'date' },
+  { title: 'Expired Date', key: 'expirationDate' },
   { title: 'Action', key: 'actions', sortable: false },
 ];
 
@@ -27,6 +34,27 @@ const offerBid = (id: number, bids: any) => {
   }
 };
 
+const handleCreateDialog = () => {
+  state.dialogAction.type = 'create';
+  state.dialogAction.data = null;
+  state.showDialog = true;
+};
+
+// Filter pengadaan yang sudah expired
+const expiredProcurements = computed(() => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  return procurements.value.filter(item => item.expirationDate < currentDate);
+});
+
+const activeProcurements = computed(() => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  return procurements.value.filter(item => item.expirationDate >= currentDate);
+})
+
+const handleDialogClose = () => {
+  state.showDialog = false;
+}
+
 onMounted(() => {
   procurementStore.fetchProcurements();
 });
@@ -36,15 +64,16 @@ onMounted(() => {
   <v-container>
     <Navbar />
     <v-card class="top">
-      <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
+      <v-tabs v-model="state.tab" align-tabs="center" color="deep-purple-accent-4">
         <v-tab>Pengadaan (Invitation for Bid)</v-tab>
         <v-tab>Pengumuman Pengadaan (Announcement of Successful Bid)</v-tab>
       </v-tabs>
 
-      <v-tabs-window v-model="tab">
+      <v-tabs-window v-model="state.tab">
         <!-- Tab Pengadaan -->
         <v-tabs-window-item>
-          <v-data-table :items="procurements" :headers="headers">
+          <v-btn color="primary" @click="handleCreateDialog" class="btn-create">Create</v-btn>
+          <v-data-table :items="activeProcurements" :headers="tableHeaders">
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn color="success" v-if="isLoggedIn" @click="offerBid(item.id, item.bids)">Bid</v-btn>
               <span class="text-disabled mr-2" v-else>Login to Bid</span>
@@ -56,15 +85,31 @@ onMounted(() => {
         <!-- Tab Pengumuman Pengadaan -->
         <v-tabs-window-item>
           <!-- Daftar pengumuman pengadaan di sini -->
-          <p>Belum ada pengumuman saat ini.</p>
+          <v-data-table :items="expiredProcurements" :headers="tableHeaders">
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-btn color="primary" :to="`/procurement/${item.id}`">Detail</v-btn>
+            </template>
+          </v-data-table>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card>
+
+    <DialogProcurement
+      v-if="state.showDialog"
+      :showDialog="state.showDialog"
+      :action="state.dialogAction"
+      @close="handleDialogClose"
+    />
   </v-container>
 </template>
 
 <style scoped>
 .top {
   margin-top: 70px;
+}
+
+.btn-create {
+  float: right;
+  margin: 10px;
 }
 </style>
