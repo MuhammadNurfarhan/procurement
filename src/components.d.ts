@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DialogBid: typeof import('./views/home/components/DialogBid.vue')['default']
     DialogProcurement: typeof import('./views/home/components/DialogProcurement.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

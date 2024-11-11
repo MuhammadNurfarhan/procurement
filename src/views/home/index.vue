@@ -2,6 +2,7 @@
 import { useAuthStore } from '@/stores/modules/authStore';
 import { useProcurementStore } from '@/stores/modules/procurementStore';
 import DialogProcurement from './components/DialogProcurement.vue';
+import DialogBid from './components/DialogBid.vue';
 import Navbar from '@/components/Navbar.vue';
 
 // Inisialisasi store
@@ -10,27 +11,32 @@ const procurementStore = useProcurementStore();
 
 // Akses state dan aksi dari store
 const isLoggedIn = computed(() => !!authStore.token);
+const isUserRole = computed(() => authStore.role === 'user');
 const procurements = computed(() => procurementStore.procurements);
 
 const state = reactive({
   tab: 0,
   showDialog: false,
+  showBidDialog: false,
   dialogAction: {
     type: "create",
     data: {},
-  }
+  },
+  bidDialogData: {
+    id: null,
+  },
 })
 
 const tableHeaders: any = [
-  { title: 'Request Name', key: 'name' },
+  { title: 'Request Name', key: 'procurementName' },
   { title: 'Expired Date', key: 'expirationDate' },
   { title: 'Action', key: 'actions', sortable: false },
 ];
 
-// Fungsi untuk menawarkan bid
-const offerBid = (id: number, bids: any) => {
-  if (isLoggedIn.value) {
-    procurementStore.offerBid(id, bids);
+const openBidDialog = (procurementId: number) => {
+  if (isLoggedIn.value && !isUserRole.value) {
+    state.bidDialogData.id = procurementId;
+    state.showBidDialog = true;
   }
 };
 
@@ -55,8 +61,12 @@ const handleDialogClose = () => {
   state.showDialog = false;
 }
 
+const handleBidDialogClose = () => {
+  state.showBidDialog = false;
+}
+
 onMounted(() => {
-  procurementStore.fetchProcurements();
+  procurementStore.getProcurementList();
 });
 </script>
 
@@ -75,7 +85,7 @@ onMounted(() => {
           <v-btn color="primary" @click="handleCreateDialog" class="btn-create">Create</v-btn>
           <v-data-table :items="activeProcurements" :headers="tableHeaders">
             <template v-slot:[`item.actions`]="{ item }">
-              <v-btn color="success" v-if="isLoggedIn" @click="offerBid(item.id, item.bids)">Bid</v-btn>
+              <v-btn class="mr-2" color="success" v-if="!isUserRole && !isLoggedIn" @click="openBidDialog(item.id)">Bid</v-btn>
               <span class="text-disabled mr-2" v-else>Login to Bid</span>
               <v-btn color="primary" :to="`/procurement/${item.id}`">Detail</v-btn>
             </template>
@@ -99,6 +109,13 @@ onMounted(() => {
       :showDialog="state.showDialog"
       :action="state.dialogAction"
       @close="handleDialogClose"
+    />
+
+    <DialogBid
+      v-if="state.showBidDialog"
+      :showBidDialog="state.showBidDialog"
+      :action="{ type: 'create', data: { id: state.bidDialogData.id } }"
+      @close="handleBidDialogClose"
     />
   </v-container>
 </template>

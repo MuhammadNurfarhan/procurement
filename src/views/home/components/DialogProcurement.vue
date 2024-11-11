@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { createProcurementAPI, updateProcurementAPI } from "@/api/procurement/procurement";
 
 const props = defineProps({
   showDialog: Boolean,
@@ -13,11 +14,6 @@ const dialogState = computed({
   set: () => {
     emit('close');
   },
-});
-
-// Judul dialog yang berubah berdasarkan aksi (create atau update)
-const dialogTitle = computed(() => {
-  return props.action.type === 'create' ? 'Create Procurement' : 'Update Procurement';
 });
 
 // State untuk menyimpan data form
@@ -43,22 +39,19 @@ const minDate = new Date();
 minDate.setDate(minDate.getDate() + 7);
 const formattedMinDate = minDate.toISOString().split('T')[0];
 
-// Fungsi untuk menangani pembatalan dialog
 const handleCancelClick = () => {
   emit('close');
 };
 
-// Fungsi untuk menyimpan data form, disesuaikan berdasarkan aksi
 const handleSaveClick = () => {
-  // Simpan data sesuai kebutuhan, misalnya panggilan API atau metode store
-  if (props.action.type === 'create') {
-    // Panggil API create
-    console.log("Creating procurement:", state.formData);
-  } else if (props.action.type === 'update') {
-    // Panggil API update
-    console.log("Updating procurement:", state.formData);
-  }
-  emit('close'); // Tutup dialog setelah save
+  // Lakukan proses penyimpanan data form di sini
+  const request = props.action.type === 'create'
+    ? createProcurementAPI
+    : updateProcurementAPI;
+
+  request(state.formData).then(() => {
+    emit('close');
+  })
 };
 
 const handleFileUpload = (e: Event, index: number) => {
@@ -87,9 +80,7 @@ const removeItem = (index: number) => {
 
 // Mengatur data form ketika dialog dibuka dengan tipe update
 onBeforeMount(() => {
-  if (props.action.type === 'update') {
-    state.formData = { ...props.action.data };
-  } else if (props.action.type === 'create') {
+  if (props.action.type === 'create') {
     state.formData = {
       procurementName: '',
       expirationDate: null,
@@ -112,7 +103,7 @@ onBeforeMount(() => {
 <template>
   <v-dialog v-model="dialogState" >
     <v-card>
-      <v-card-title>{{ dialogTitle }}</v-card-title>
+      <v-card-title>Create Procurement</v-card-title>
       <v-divider />
       <v-card-text>
         <v-form>

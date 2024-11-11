@@ -4,26 +4,26 @@ import { useRouter } from 'vue-router';
 import { loginAPI, registerAPI } from '@/api/auth/auth';
 
 interface UserData {
-  // role: string;
+  role: string;
   token: string;
 }
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
-  // const role = ref<string | null>(localStorage.getItem('role') || null);
+  const role = ref<string | null>(localStorage.getItem('role') || null);
   const token = ref<string | null>(localStorage.getItem('token') || null);
 
-  const setUserData = ({ token: newToken }: UserData) => {
-    // role.value = newRole;
+  const setUserData = ({ token: newToken, role: newRole }: UserData) => {
+    role.value = newRole;
     token.value = newToken;
-    // localStorage.setItem('role', newRole);
+    localStorage.setItem('role', newRole);
     localStorage.setItem('token', newToken);
   };
 
   const clearUserData = () => {
-    // role.value = null;
+    role.value = null;
     token.value = null;
-    // localStorage.removeItem('role');
+    localStorage.removeItem('role');
     localStorage.removeItem('token');
   };
 
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
         password,
       });
 
-      setUserData({ token: response.data.token });
+      setUserData({ token: response.data.token , role: response.data.role});
       router.push('/');
     } catch (error) {
       console.error(error);
@@ -60,11 +60,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   const restoreUser = () => {
     const storedRole = localStorage.getItem('role');
-    // role.value = storedRole || null;
+    role.value = storedRole || null;
   };
 
   return {
-    // role,
+    role,
     token,
     register,
     login,
