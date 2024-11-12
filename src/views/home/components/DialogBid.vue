@@ -2,14 +2,14 @@
 import { createBidAPI, updateBidAPI } from '@/api/procurement/bid';
 
 const props = defineProps({
-  showDialog: Boolean,
+  showBidDialog: Boolean,
   action: Object,
 });
 
 const emit = defineEmits(['close']);
 
 const dialogState = computed({
-  get: () => props.showDialog,
+  get: () => props.showBidDialog,
   set: () => {
     emit('close');
   },
@@ -22,8 +22,7 @@ const dialogTitle = computed(() => {
 // State untuk menyimpan data form bid
 const state = reactive({
   formData: {
-    bidAmount: 0,
-    bidNotes: '',
+    items: [] as Array<{ itemName: string; unitPrice: number; notes: string }>,
   },
 });
 
@@ -34,17 +33,23 @@ const handleCancelClick = () => {
 const handleSaveClick = () => {
   const request = props.action.type === 'create' ? createBidAPI : updateBidAPI;
 
-  request({ ...state.formData, procurementId: props.action.data.id }).then(() => {
+  // Kirimkan data bid dengan item detail
+  request({
+    procurementId: props.action.data.id,
+    items: state.formData.items,
+  }).then(() => {
     emit('close');
   });
 };
 
 onBeforeMount(() => {
-  if (props.action.type === 'create') {
-    state.formData = {
-      bidAmount: 0,
-      bidNotes: ''
-    };
+  if (props.action.type === 'create' && props.action.data?.items) {
+    // Inisialisasi formData items dengan item dari procurement
+    state.formData.items = props.action.data.items.map((item: any) => ({
+      itemName: item.name,
+      unitPrice: 0,
+      notes: '',
+    }));
   }
 });
 </script>
@@ -56,21 +61,23 @@ onBeforeMount(() => {
       <v-divider />
       <v-card-text>
         <v-form>
-          <v-text-field
-            v-model="state.formData.bidAmount"
-            label="Bid Amount"
-            type="number"
-            variant="outlined"
-            color="primary"
-            required
-          />
-          <v-textarea
-            v-model="state.formData.bidNotes"
-            label="Notes"
-            variant="outlined"
-            rows="2"
-            color="primary"
-          />
+          <div v-for="(item, index) in state.formData.items" :key="index" class="mb-4">
+            <v-text-field
+              v-model="item.unitPrice"
+              :label="`Harga per satuan untuk ${item.itemName}`"
+              type="number"
+              variant="outlined"
+              color="primary"
+              required
+            />
+            <v-textarea
+              v-model="item.notes"
+              :label="`Catatan untuk ${item.itemName}`"
+              variant="outlined"
+              rows="2"
+              color="primary"
+            />
+          </div>
         </v-form>
       </v-card-text>
       <v-card-actions>

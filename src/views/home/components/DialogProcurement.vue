@@ -8,7 +8,6 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-// Computed untuk mengatur visibilitas dialog
 const dialogState = computed({
   get: () => props.showDialog,
   set: () => {
@@ -16,7 +15,6 @@ const dialogState = computed({
   },
 });
 
-// State untuk menyimpan data form
 const state = reactive({
   formData: {
     procurementName: '',
@@ -39,12 +37,15 @@ const minDate = new Date();
 minDate.setDate(minDate.getDate() + 7);
 const formattedMinDate = minDate.toISOString().split('T')[0];
 
+const dialogTitle = computed(() => {
+  return props.action.type === 'create' ? 'Create Procurement' : 'Update Procurement';
+});
+
 const handleCancelClick = () => {
   emit('close');
 };
 
 const handleSaveClick = () => {
-  // Lakukan proses penyimpanan data form di sini
   const request = props.action.type === 'create'
     ? createProcurementAPI
     : updateProcurementAPI;
@@ -78,7 +79,6 @@ const removeItem = (index: number) => {
   state.formData.items.splice(index, 1);
 };
 
-// Mengatur data form ketika dialog dibuka dengan tipe update
 onBeforeMount(() => {
   if (props.action.type === 'create') {
     state.formData = {
@@ -103,7 +103,7 @@ onBeforeMount(() => {
 <template>
   <v-dialog v-model="dialogState" >
     <v-card>
-      <v-card-title>Create Procurement</v-card-title>
+      <v-card-title>{{ dialogTitle }}</v-card-title>
       <v-divider />
       <v-card-text>
         <v-form>
@@ -175,9 +175,10 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="12" md="2">
                 <v-file-input
+                  v-model="item.attachment"
                   label="Attachment (Images)"
                   @change="handleFileUpload"
-                  accept=".pdf,image/*"
+                  accept="image/*"
                 />
               </v-col>
               <v-col cols="12" md="2">

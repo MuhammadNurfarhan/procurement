@@ -24,6 +24,7 @@ const state = reactive({
   },
   bidDialogData: {
     id: null,
+    items: [],
   },
 })
 
@@ -33,10 +34,16 @@ const tableHeaders: any = [
   { title: 'Action', key: 'actions', sortable: false },
 ];
 
-const openBidDialog = (procurementId: number) => {
-  if (isLoggedIn.value && !isUserRole.value) {
-    state.bidDialogData.id = procurementId;
-    state.showBidDialog = true;
+const openBidDialog = (procurementId: any) => {
+  if (!isLoggedIn.value && !isUserRole.value) {
+    // Ambil data procurement berdasarkan ID
+    const procurement = procurementStore.getProcurementById(procurementId);
+
+    if (procurement) {
+      state.bidDialogData.id = procurementId;
+      state.bidDialogData.items = procurement.items; // Tambahkan items ke bidDialogData
+      state.showBidDialog = true;
+    }
   }
 };
 

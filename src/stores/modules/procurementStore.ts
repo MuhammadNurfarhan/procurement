@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { getProcurementAPI } from '@/api/procurement/procurement';
 
 interface Item {
   name: string;
@@ -15,12 +16,13 @@ interface Bid {
 }
 
 interface Procurement {
-  id: number;
+  id: string;
   procurementName: string;
   expirationDate: string;
-  isClosed: boolean;
-  items: Array<Item>;
-  bids?: Array<Bid>;
+  description?: string;
+  items: Item[];
+  bids?: Bid[];
+  status: boolean;
 }
 
 export const useProcurementStore = defineStore('procurement', () => {
@@ -29,76 +31,44 @@ export const useProcurementStore = defineStore('procurement', () => {
 
   // Getter
   const openProcurements = computed(() =>
-    procurements.value.filter(procurement => !procurement.isClosed)
+    procurements.value.filter(procurement => !procurement.status)
   );
 
-  // Action untuk memuat data pengadaan
-  const getProcurementList = () => {
-
-    // getProcurementAPI()
-    //  .then((res: any) => {
-    //     procurements.value = res.data;
-    //   })
-    //  .catch((error: any) => {
-    //     console.error('Error fetching procurements:', error);
-    //   });
-
-    // Contoh data mock untuk simulasi fetch data
-    procurements.value = [
-      {
-        id: 1,
-        procurementName: 'Pengadaan Komputer',
-        expirationDate: '2024-12-01',
-        isClosed: false,
-        items: [
-          {
-            name: 'Laptop',
-            specification: 'Laptop dengan RAM 8GB dan SSD 256GB',
-            quantity: 10,
-            unit: 'pcs',
-            notes: 'Laptop harus memiliki garansi 2 tahun',
-            attachment: 'https://example.com/attachment-laptop.pdf',
-          },
-          {
-            name: 'Monitor',
-            specification: 'Monitor LED 24 inci',
-            quantity: 10,
-            unit: 'pcs',
-            notes: 'Resolusi minimal Full HD',
-            attachment: 'https://example.com/attachment-monitor.pdf',
-          },
-        ],
-      },
-      {
-        id: 2,
-        procurementName: 'Pengadaan Meja Kantor',
-        expirationDate: '2023-10-02',
-        isClosed: true,
-        items: [
-          {
-            name: 'Meja Kantor',
-            specification: 'Meja kantor kayu dengan ukuran 120x60 cm',
-            quantity: 20,
-            unit: 'unit',
-            notes: 'Memiliki laci di sisi kanan',
-            attachment: 'https://example.com/attachment-meja.pdf',
-          },
-        ],
-      },
-    ];
+  const getProcurementList = async () => {
+    try {
+      const response = await getProcurementAPI();
+      if (response.data) {
+        procurements.value = response.data.map((item: any) => ({
+          id: item.ID,
+          procurementName: item.ProcurementName,
+          expirationDate: item.ExpirationDate,
+          status: item.status !== 'ACTIVE', // Adjust isClosed based on status
+          items: item.ProcDetail.map((detail: any) => ({
+            name: detail.Name,
+            specification: detail.Specification,
+            quantity: detail.Quantity,
+            unit: detail.Unit,
+            notes: detail.Notes,
+            attachment: detail.Attachment || null,
+          })),
+        }));
+      }
+    } catch (error: any) {
+      console.error('Error fetching procurements:', error);
+    }
   };
 
   // Action untuk menutup pengadaan berdasarkan ID
-  const closeProcurement = (id: number) => {
+  const closeProcurement = (id: any) => {
     const procurement = procurements.value.find(p => p.id === id);
-    if (procurement) procurement.isClosed = true;
+    if (procurement) procurement.status = true;
   };
 
-  const getProcurementById = (id: number): Procurement | undefined => {
+  const getProcurementById = (id: any): Procurement | undefined => {
     return procurements.value.find(procurement => procurement.id === id);
   };
 
-  const getBidsByProcurementId = (id: number): Array<Bid> | undefined => {
+  const getBidsByProcurementId = (id: any): Bid[] | undefined => {
     return procurements.value.find(procurement => procurement.id === id)?.bids;
   };
 
@@ -107,7 +77,7 @@ export const useProcurementStore = defineStore('procurement', () => {
     openProcurements,
     getProcurementList,
     closeProcurement,
-    // offerBid,
     getProcurementById,
+    getBidsByProcurementId
   };
 });
