@@ -22,7 +22,7 @@ const dialogTitle = computed(() => {
 // State untuk menyimpan data form bid
 const state = reactive({
   formData: {
-    items: [] as Array<{ itemName: string; unitPrice: number; notes: string }>,
+    items: [],
   },
 });
 
@@ -43,6 +43,7 @@ const handleSaveClick = () => {
 };
 
 onBeforeMount(() => {
+  console.log("Items:", props.action.data?.items);
   if (props.action.type === 'create' && props.action.data?.items) {
     // Inisialisasi formData items dengan item dari procurement
     state.formData.items = props.action.data.items.map((item: any) => ({
@@ -50,6 +51,8 @@ onBeforeMount(() => {
       unitPrice: 0,
       notes: '',
     }));
+  } else {
+    console.warn("No items found")
   }
 });
 </script>
@@ -59,7 +62,7 @@ onBeforeMount(() => {
     <v-card>
       <v-card-title>{{ dialogTitle }}</v-card-title>
       <v-divider />
-      <v-card-text>
+      <v-card-text v-if="state.formData.items.length">
         <v-form>
           <div v-for="(item, index) in state.formData.items" :key="index" class="mb-4">
             <v-text-field
@@ -79,6 +82,9 @@ onBeforeMount(() => {
             />
           </div>
         </v-form>
+      </v-card-text>
+      <v-card-text v-else>
+        <p>No items found.</p>
       </v-card-text>
       <v-card-actions>
         <v-btn class="bg-primary" @click="handleSaveClick">Save</v-btn>

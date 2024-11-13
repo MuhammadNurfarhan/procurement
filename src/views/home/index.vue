@@ -121,7 +121,7 @@ onMounted(() => {
     <DialogBid
       v-if="state.showBidDialog"
       :showBidDialog="state.showBidDialog"
-      :action="{ type: 'create', data: { id: state.bidDialogData.id } }"
+      :action="{ type: 'create', data: { id: state.bidDialogData.id, items: state.bidDialogData.items } }"
       @close="handleBidDialogClose"
     />
   </v-container>
