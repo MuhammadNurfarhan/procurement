@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getProcurementAPI } from '@/api/procurement/procurement';
+import { getProcurementAPI, acceptBidAPI } from '@/api/procurement/procurement';
 
 interface Item {
   name: string;
@@ -11,8 +11,10 @@ interface Item {
 }
 
 interface Bid {
+  id: string;
   price: number;
   notes: string;
+  selected?: boolean;
 }
 
 interface Procurement {
@@ -27,7 +29,7 @@ interface Procurement {
 
 export const useProcurementStore = defineStore('procurement', () => {
   // State
-  const procurements = ref<Procurement[]>([]);
+  const procurements = ref<Procurement[] | null>([]);
 
   // Getter
   const openProcurements = computed(() =>
@@ -43,7 +45,7 @@ export const useProcurementStore = defineStore('procurement', () => {
           procurementName: item.ProcurementName,
           expirationDate: item.ExpirationDate,
           status: item.status !== 'ACTIVE', // Adjust isClosed based on status
-          items: item.ProcDetail.map((detail: any) => ({
+          items: item.Items.map((detail: any) => ({
             name: detail.Name,
             specification: detail.Specification,
             quantity: detail.Quantity,
@@ -72,12 +74,30 @@ export const useProcurementStore = defineStore('procurement', () => {
     return procurements.value.find(procurement => procurement.id === id)?.bids;
   };
 
+  const acceptBid = async (procurementId: string, bidId: string) => {
+    try {
+      const response = await acceptBidAPI(procurementId, bidId); // Call backend to accept bid
+      if (response.data) {
+        const procurement = procurements.value.find(p => p.id === procurementId);
+        if (procurement && procurement.bids) {
+          procurement.bids.forEach(bid => {
+            bid.selected = bid.id === bidId; // Mark the selected bid
+          });
+          procurement.status = true; // Close the procurement if desired
+        }
+      }
+    } catch (error) {
+      console.error('Error accepting bid:', error);
+    }
+  };
+
   return {
     procurements,
     openProcurements,
     getProcurementList,
     closeProcurement,
     getProcurementById,
-    getBidsByProcurementId
+    getBidsByProcurementId,
+    acceptBid,
   };
 });

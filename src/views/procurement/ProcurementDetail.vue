@@ -17,6 +17,16 @@ const bidHeaders: any = [
   { title: 'User', key: 'user' },
 ]
 
+const selectBid = (bid: any) => {
+  // Implement logic to select the bid (e.g., update the procurement status or mark the bid as accepted).
+  procurementStore.acceptBid(procurement.value.id, bid.id).then(() => {
+    console.log("Bid selected successfully");
+    procurement.value.bids.forEach((b: any) => {
+      b.selected = b.id === bid.id; // Mark only the selected bid
+    });
+  });
+};
+
 // Ambil ID dari route parameter dan fetch detail
 onMounted(async () => {
   const id = route.params.id;
@@ -67,7 +77,11 @@ onMounted(async () => {
         <div v-if="isAdmin && procurement.bids && procurement.bids.length > 0">
           <v-divider class="my-4" />
           <h3>Detail Bidding</h3>
-          <v-data-table :items="procurement.bids" :headers="bidHeaders" />
+          <v-data-table :items="procurement.bids" :headers="bidHeaders">
+            <template v-slot:[`item.selectBid`]="{ item }">
+              <v-btn color="primary" @click="selectBid(item)">Pilih</v-btn>
+            </template>
+          </v-data-table>
         </div>
       </v-card-text>
       <v-card-text v-else>

@@ -17,15 +17,15 @@ const dialogState = computed({
 
 const state = reactive({
   formData: {
-    procurementName: '',
-    expirationDate: null,
-    items: [
+    ProcurementName: '',
+    ExpirationDate: null,
+    Items: [
       {
-        name: '',
-        specification: '',
-        quantity: 0,
-        unit: '',
-        notes: '',
+        Name: '',
+        Specification: '',
+        Quantity: 0,
+        Unit: '',
+        Notes: '',
         attachment: null,
       },
     ],
@@ -58,39 +58,39 @@ const handleSaveClick = () => {
 const handleFileUpload = (e: Event, index: number) => {
   const files = (e.target as HTMLInputElement).files;
   if (files && files[0]) {
-    state.formData.items[index].attachment = files[0];
+    state.formData.Items[index].attachment = files[0];
   }
 };
 
 // Fungsi untuk menambahkan item baru
 const addItem = () => {
-  state.formData.items.push({
-    name: '',
-    specification: '',
-    quantity: 0,
-    unit: '',
-    notes: '',
+  state.formData.Items.push({
+    Name: '',
+    Specification: '',
+    Quantity: 0,
+    Unit: '',
+    Notes: '',
     attachment: null,
   });
 };
 
 // Fungsi untuk menghapus item tertentu berdasarkan indeks
 const removeItem = (index: number) => {
-  state.formData.items.splice(index, 1);
+  state.formData.Items.splice(index, 1);
 };
 
 onBeforeMount(() => {
   if (props.action.type === 'create') {
     state.formData = {
-      procurementName: '',
-      expirationDate: null,
-      items: [
+      ProcurementName: '',
+      ExpirationDate: null,
+      Items: [
         {
-          name: '',
-          specification: '',
-          quantity: 0,
-          unit: '',
-          notes: '',
+          Name: '',
+          Specification: '',
+          Quantity: 0,
+          Unit: '',
+          Notes: '',
           attachment: null,
         },
       ],
@@ -108,14 +108,14 @@ onBeforeMount(() => {
       <v-card-text>
         <v-form>
           <v-text-field
-            v-model="state.formData.procurementName"
+            v-model="state.formData.ProcurementName"
             label="Procurement Name"
             variant="outlined"
             color="primary"
             required
           />
           <v-date-input
-            v-model="state.formData.expirationDate"
+            v-model="state.formData.ExpirationDate"
             label="Expiration Date"
             color="primary"
             variant="outlined"
@@ -123,14 +123,14 @@ onBeforeMount(() => {
             :min="formattedMinDate"
           />
 
-          <template v-for="(item, index) in state.formData.items" :key="index">
+          <template v-for="(item, index) in state.formData.Items" :key="index">
             <v-divider class="my-4" />
-            <v-card-subtitle>Item {{ index + 1 }}</v-card-subtitle>
+            <v-card-subtitle class="mb-2 font-weight-bold">Item {{ index + 1 }}</v-card-subtitle>
 
             <v-row>
               <v-col cols="12" md="2">
                 <v-text-field
-                  v-model="item.name"
+                  v-model="item.Name"
                   label="Item Name"
                   variant="outlined"
                   color="primary"
@@ -139,7 +139,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="12" md="2">
                 <v-text-field
-                  v-model="item.specification"
+                  v-model="item.Specification"
                   label="Specification"
                   variant="outlined"
                   color="primary"
@@ -148,7 +148,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="6" md="1">
                 <v-text-field
-                  v-model="item.quantity"
+                  v-model="item.Quantity"
                   label="Quantity"
                   type="number"
                   variant="outlined"
@@ -158,7 +158,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="6" md="1">
                 <v-text-field
-                  v-model="item.unit"
+                  v-model="item.Unit"
                   label="Unit"
                   variant="outlined"
                   color="primary"
@@ -167,7 +167,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="12" md="2">
                 <v-text-field
-                  v-model="item.notes"
+                  v-model="item.Notes"
                   label="Notes"
                   variant="outlined"
                   color="primary"
@@ -183,7 +183,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="12" md="2">
                 <v-btn
-                  v-if="state.formData.items.length > 1"
+                  v-if="state.formData.Items.length > 1"
                   color="error"
                   class="mt-4"
                   @click="removeItem(index)"

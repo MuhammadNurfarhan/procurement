@@ -9,7 +9,7 @@ export const getProcurementAPI = () => {
 
 export const createProcurementAPI = (data: any) => {
   return request({
-    url: '/api/v1/procurement',
+    url: '/api/v1/prc',
     method: 'post',
     data,
     headers: {
@@ -39,5 +39,12 @@ export const getBidsByProcurementIdAPI = (data: any) => {
     url: `/api/v1/procurement/${data.id}/bids`,
     method: 'get',
     data
+  });
+}
+
+export const acceptBidAPI = (procurementId: string, bidId: string) => {
+  return request({
+    url: `/api/v1/procurement/${procurementId}/bids/${bidId}/accept`,
+    method: 'put',
   });
 }
