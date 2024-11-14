@@ -29,7 +29,7 @@ interface Procurement {
 
 export const useProcurementStore = defineStore('procurement', () => {
   // State
-  const procurements = ref<Procurement[] | null>([]);
+  const procurements = ref<Procurement[]>([]);
 
   // Getter
   const openProcurements = computed(() =>
@@ -39,12 +39,12 @@ export const useProcurementStore = defineStore('procurement', () => {
   const getProcurementList = async () => {
     try {
       const response = await getProcurementAPI();
-      if (response.data) {
+      if (response.data && response.data.length > 0) {
         procurements.value = response.data.map((item: any) => ({
           id: item.ID,
           procurementName: item.ProcurementName,
           expirationDate: item.ExpirationDate,
-          status: item.status !== 'ACTIVE', // Adjust isClosed based on status
+          status: item.status !== 'ACTIVE',
           items: item.Items.map((detail: any) => ({
             name: detail.Name,
             specification: detail.Specification,

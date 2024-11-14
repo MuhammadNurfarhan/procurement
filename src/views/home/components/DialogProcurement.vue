@@ -17,16 +17,16 @@ const dialogState = computed({
 
 const state = reactive({
   formData: {
-    ProcurementName: '',
-    ExpirationDate: null,
-    Items: [
+    "ProcurementName": "",
+    "ExpirationDate": null,
+    "Items": [
       {
-        Name: '',
-        Specification: '',
-        Quantity: 0,
-        Unit: '',
-        Notes: '',
-        attachment: null,
+        "Name": "",
+        "Specification": "",
+        "Quantity": 0,
+        "Unit": "",
+        "Notes": "",
+        "attachment": null,
       },
     ],
   },
@@ -38,7 +38,7 @@ minDate.setDate(minDate.getDate() + 7);
 const formattedMinDate = minDate.toISOString().split('T')[0];
 
 const dialogTitle = computed(() => {
-  return props.action.type === 'create' ? 'Create Procurement' : 'Update Procurement';
+  return props.action.type === 'create' ? 'Create' : 'Update';
 });
 
 const handleCancelClick = () => {
@@ -46,18 +46,37 @@ const handleCancelClick = () => {
 };
 
 const handleSaveClick = () => {
-  const request = props.action.type === 'create'
-    ? createProcurementAPI
-    : updateProcurementAPI;
+  const formData = new FormData();
 
-  request(state.formData).then(() => {
-    emit('close');
-  })
+  formData.append('ProcurementName', state.formData.ProcurementName);
+  formData.append('ExpirationDate', state.formData.ExpirationDate);
+
+
+  state.formData.Items.forEach((item, index) => {
+    formData.append(`Items[${index}].Name`, item.Name);
+    formData.append(`Items[${index}].Specification`, item.Specification);
+    formData.append(`Items[${index}].Quantity`, item.Quantity.toString());
+    formData.append(`Items[${index}].Unit`, item.Unit);
+    formData.append(`Items[${index}].Notes`, item.Notes);
+    if (item.attachment) {
+      formData.append(`Items[${index}].attachment`, item.attachment);
+    }
+  });
+
+  // Use create or update API based on the action type
+  const request = props.action.type === "create" ? createProcurementAPI : updateProcurementAPI;
+
+  request(formData)
+    .then(() => {
+      emit('close');
+    }).catch(error => {
+      console.error("Error posting procurement data:", error);
+    });
 };
 
 const handleFileUpload = (e: Event, index: number) => {
   const files = (e.target as HTMLInputElement).files;
-  if (files && files[0]) {
+  if (files && files[0] && state.formData.Items[index]) {
     state.formData.Items[index].attachment = files[0];
   }
 };
@@ -80,20 +99,11 @@ const removeItem = (index: number) => {
 };
 
 onBeforeMount(() => {
-  if (props.action.type === 'create') {
+  if (props.action.type === 'update') {
+    state.formData = {...props.action.data};
+  } else if (props.action.type === 'create') {
     state.formData = {
-      ProcurementName: '',
-      ExpirationDate: null,
-      Items: [
-        {
-          Name: '',
-          Specification: '',
-          Quantity: 0,
-          Unit: '',
-          Notes: '',
-          attachment: null,
-        },
-      ],
+      ...state.formData
     };
   }
 });
@@ -103,7 +113,7 @@ onBeforeMount(() => {
 <template>
   <v-dialog v-model="dialogState" >
     <v-card>
-      <v-card-title>{{ dialogTitle }}</v-card-title>
+      <v-card-title>{{ dialogTitle }} Procurement</v-card-title>
       <v-divider />
       <v-card-text>
         <v-form>
@@ -208,6 +218,6 @@ onBeforeMount(() => {
   </v-dialog>
 </template>
 
-<style scoped>
+<style lang="scss">
 /* Tambahkan gaya khusus jika diperlukan */
 </style>

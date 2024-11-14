@@ -47,8 +47,8 @@ const openBidDialog = (procurementId: any) => {
   }
 };
 
-const handleCreateDialog = () => {
-  state.dialogAction.type = 'create';
+const handleCreateClick = () => {
+  state.dialogAction.type = "create";
   state.dialogAction.data = null;
   state.showDialog = true;
 };
@@ -66,15 +66,17 @@ const activeProcurements = computed(() => {
 
 const handleDialogClose = () => {
   state.showDialog = false;
+  procurementStore.getProcurementList();
 }
 
 const handleBidDialogClose = () => {
   state.showBidDialog = false;
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   procurementStore.getProcurementList();
 });
+
 </script>
 
 <template>
@@ -89,7 +91,7 @@ onMounted(() => {
       <v-tabs-window v-model="state.tab">
         <!-- Tab Pengadaan -->
         <v-tabs-window-item>
-          <v-btn color="primary" @click="handleCreateDialog" class="btn-create">Create</v-btn>
+          <v-btn color="primary" @click="handleCreateClick" class="btn-create">Create</v-btn>
           <v-data-table :items="activeProcurements" :headers="tableHeaders">
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn class="mr-2" color="success" v-if="!isUserRole && !isLoggedIn" @click="openBidDialog(item.id)">Bid</v-btn>
