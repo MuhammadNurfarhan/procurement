@@ -1,0 +1,49 @@
+image: node:20.16.0-alpine
+
+stages:
+  - test
+  - build
+  - deploy
+
+cache:
+  paths:
+    - node_modules
+
+test:lint:
+  stage: test
+  script:
+    - npm install -g pnpm
+    - pnpm install --no-frozen-lockfile
+    - pnpm lint
+
+build:
+  stage: build
+  script:
+    - npm install -g pnpm
+    - pnpm install --no-frozen-lockfile
+    - pnpm build
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 day
+  retry: 2
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apk add --update --no-cache openssh )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H 192.168.111.9 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh administrator@192.168.111.9 'rm -rf /var/www/procurement/dist-bak'
+    - ssh administrator@192.168.111.9 'mv /var/www/procurement/dist /var/www/procurement/dist-bak'
+    - scp -r dist administrator@192.168.111.9:/var/www/procurement/
+  retry: 2
+  only:
+    - main
