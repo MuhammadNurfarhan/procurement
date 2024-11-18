@@ -6,25 +6,33 @@ import { loginAPI, registerAPI } from '@/api/auth/auth';
 interface UserData {
   role: string;
   token: string;
+  user: string;
 }
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
   const role = ref<string | null>(localStorage.getItem('role') || null);
   const token = ref<string | null>(localStorage.getItem('token') || null);
+  const user = ref<string| null>(localStorage.getItem('user') || null);
 
-  const setUserData = ({ token: newToken, role: newRole }: UserData) => {
+  const setUserData = ({ token: newToken, role: newRole, user: newUser }: UserData) => {
     role.value = newRole;
     token.value = newToken;
+    user.value = newUser;
+
     localStorage.setItem('role', newRole);
     localStorage.setItem('token', newToken);
+    localStorage.setItem('user', newUser);
   };
 
   const clearUserData = () => {
     role.value = null;
     token.value = null;
+    user.value = null;
+
     localStorage.removeItem('role');
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   const register = (email: string, password: string, name: string) => {
@@ -46,7 +54,11 @@ export const useAuthStore = defineStore('auth', () => {
         password,
       });
 
-      setUserData({ token: response.data.token , role: response.data.role});
+      setUserData({
+        token: response.data.tok,
+        role: response.data.role,
+        user: response.data.name,
+      });
       router.push('/');
     } catch (error) {
       console.error(error);
@@ -60,12 +72,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   const restoreUser = () => {
     const storedRole = localStorage.getItem('role');
+    const storedUser = localStorage.getItem('user');
     role.value = storedRole || null;
+    user.value = storedUser || null;
   };
 
   return {
     role,
     token,
+    user,
     register,
     login,
     logout,

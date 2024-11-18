@@ -64,12 +64,6 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
-    // host: '0.0.0.0',
-    // port: 3000,
-    // cors: true,
-    // open: true,
-
-    // for https
     host: '0.0.0.0',
     port: 443,
     cors: true,
