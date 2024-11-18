@@ -6,33 +6,33 @@ import { loginAPI, registerAPI } from '@/api/auth/auth';
 interface UserData {
   role: string;
   token: string;
-  user: string;
+  name: string;
 }
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
   const role = ref<string | null>(localStorage.getItem('role') || null);
   const token = ref<string | null>(localStorage.getItem('token') || null);
-  const user = ref<string| null>(localStorage.getItem('user') || null);
+  const name = ref<string| null>(localStorage.getItem('name') || null);
 
-  const setUserData = ({ token: newToken, role: newRole, user: newUser }: UserData) => {
+  const setUserData = ({ token: newToken, role: newRole, name: newName }: UserData) => {
     role.value = newRole;
     token.value = newToken;
-    user.value = newUser;
+    name.value = newName;
 
     localStorage.setItem('role', newRole);
     localStorage.setItem('token', newToken);
-    localStorage.setItem('user', newUser);
+    localStorage.setItem('name', newName);
   };
 
   const clearUserData = () => {
     role.value = null;
     token.value = null;
-    user.value = null;
+    name.value = null;
 
     localStorage.removeItem('role');
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('name');
   };
 
   const register = (email: string, password: string, name: string) => {
@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
     registerAPI({email, password, name})
       .then((response) => {
         setUserData(response.data);
-        router.push('/login');
+        router.push('/supplier-form');
       });
   };
 
@@ -55,9 +55,9 @@ export const useAuthStore = defineStore('auth', () => {
       });
 
       setUserData({
-        token: response.data.tok,
+        token: response.data.token,
         role: response.data.role,
-        user: response.data.name,
+        name: response.data.name,
       });
       router.push('/');
     } catch (error) {
@@ -72,15 +72,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   const restoreUser = () => {
     const storedRole = localStorage.getItem('role');
-    const storedUser = localStorage.getItem('user');
+    const storedName = localStorage.getItem('name');
     role.value = storedRole || null;
-    user.value = storedUser || null;
+    name.value = storedName || null;
   };
 
   return {
     role,
     token,
-    user,
+    name,
     register,
     login,
     logout,

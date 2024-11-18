@@ -10,6 +10,14 @@ const constantRoutes: VueRouter.RouteRecordRaw[] = [
     },
   },
   {
+    path: "/supplier-form",
+    name: "SupplierForm",
+    component: () => import("@/views/supplier/SuppllierForm.vue"),
+    meta: {
+      public: true,
+    },
+  },
+  {
     path: '/procurement/:id',
     name: 'ProcurementDetail',
     component: () => import("@/views/procurement/ProcurementDetail.vue"),

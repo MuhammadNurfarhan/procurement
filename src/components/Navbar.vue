@@ -4,7 +4,7 @@ import Logo from "@/assets/images/pages/yihquan-logo.png";
 
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => !!authStore.token);
-const userName = computed(() => authStore.user); // Ambil nama pengguna dari store
+const userName = computed(() => authStore.name); // Ambil nama pengguna dari store
 
 const logout = () => {
   authStore.logout();
