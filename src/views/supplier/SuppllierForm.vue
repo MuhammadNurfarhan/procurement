@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 
 const form = ref({
   companyName: '',
@@ -26,8 +25,28 @@ const form = ref({
   taxRate: '',
 });
 
+const tradeTermOption: any = [
+  "Provide services and ensure",
+  "The buyer's company receives the goods",
+  "The buyer's company receives the goods and ensures that the acceptance is completed and ready for use",
+  "Trade term + port name or country or designated place",
+]
+
+const rules = {
+  required: (value: string) => !!value || 'This field is required',
+  email: (value: string) => /.+@.+\..+/.test(value) || 'E-mail must be valid',
+  number: (value: string) => /^\d+$/.test(value) || 'Must be a valid number',
+};
+
+const formRef = ref(null);
+
 const submitForm = () => {
-  console.log('Form data:', form.value);
+  if (formRef.value?.validate()) {
+    console.log('Form data:', form.value);
+    alert('Form submitted successfully!');
+  } else {
+    alert('Please fix all errors before submitting.');
+  }
 };
 </script>
 
@@ -36,36 +55,55 @@ const submitForm = () => {
     <v-card class="pa-5">
       <v-card-title class="text-h5 bg-primary mb-5 rounded-xl">Supplier Registration Form</v-card-title>
       <v-card-text>
-        <v-form>
+        <v-form ref="formRef">
           <v-row dense>
             <!-- Column 1 -->
             <v-col cols="12" md="6">
-              <v-text-field label="Company Name" v-model="form.companyName"  required />
-              <v-text-field label="Company Address" v-model="form.companyAddress"  required />
-              <v-text-field label="Factory Address" v-model="form.factoryAddress"  />
-              <v-text-field label="Key Material" v-model="form.keyMaterial"  required />
-              <v-text-field label="Business Registration No." v-model="form.businessRegNo"  required />
-              <v-text-field label="Contact Person" v-model="form.contactPerson"  required />
-              <v-text-field label="Tel #" v-model="form.tel"  required />
-              <v-text-field label="Name of Bank" v-model="form.bankName"  />
+              <v-text-field label="Company Name" v-model="form.companyName" :rules="[rules.required]" placeholder="Nama Perusahaan" required />
+              <v-textarea label="Company Address" v-model="form.companyAddress" rows="3" :rules="[rules.required]" placeholder="Alamat Perusahaan" required />
+              <v-text-field label="Factory Address" v-model="form.factoryAddress" placeholder="Alamat Perusahaan" />
+              <v-text-field label="Key Material" v-model="form.keyMaterial" :rules="[rules.required]" required placeholder="Bidang perusahaan penyedia jasa/barang/dll" />
+              <v-text-field label="Business Registration No." v-model="form.businessRegNo" :rules="[rules.required]" placeholder="Nomor sesuai NIB" required />
+              <v-text-field label="Contact Person" v-model="form.contactPerson" :rules="[rules.required]" placeholder="Nama PIC" required />
+              <v-text-field label="Tel #" v-model="form.tel" :rules="[rules.required]" placeholder="Nomor Telepon" required />
+              <v-text-field label="Name of Bank" v-model="form.bankName" placeholder="Nama Bank"  />
             </v-col>
 
             <!-- Column 2 -->
             <v-col cols="12" md="6">
-              <v-text-field label="Beneficiary Name" v-model="form.beneficiaryName"  />
-              <v-text-field label="Account No." v-model="form.accountNo"  />
+              <v-text-field label="Beneficiary Name" v-model="form.beneficiaryName" placeholder="Nama rekening bank"  />
+              <v-text-field label="Account No." v-model="form.accountNo" :rules="[rules.number]" placeholder="Nomor rekening bank" />
               <v-date-input
                 label="Founded Date"
                 v-model="form.foundedDate"
                 prepend-icon=""
                 prepend-inner-icon="mdi-calendar"
+                placeholder="Tanggal pendirian perusahaan"
                 required
               />
-              <v-text-field label="P.I.C" v-model="form.pic"  />
-              <v-text-field label="E-mail" v-model="form.email"  required type="email" />
-              <v-text-field label="Fax" v-model="form.fax"  />
-              <v-text-field label="SWIFT CODE" v-model="form.swiftCode"  />
-              <v-text-field label="Currency" v-model="form.currency"  />
+              <v-text-field label="P.I.C" v-model="form.pic" placeholder="Nama PIC" />
+              <v-text-field label="E-mail" v-model="form.email" :rules="[rules.required, rules.email]" placeholder="Email PIC/Perusahaan" required />
+              <v-text-field label="Fax" v-model="form.fax" placeholder="Jika kosong tulis (-)" />
+              <v-text-field label="SWIFT CODE" v-model="form.swiftCode" placeholder="Swift code bank" />
+              <v-text-field label="Currency" v-model="form.currency" placeholder="Mata uang" />
+            </v-col>
+          </v-row>
+
+          <v-row dense>
+            <!-- Payment Term -->
+            <v-col cols="12" md="6">
+              <v-text-field label="Payment Term" v-model="form.paymentTerm" placeholder="Payment term" />
+            </v-col>
+
+            <!-- Trade Term -->
+            <v-col cols="12" md="6">
+              <v-select
+                label="Trade Term"
+                v-model="form.tradeTerm"
+                :items="tradeTermOption"
+                :rules="[rules.required]"
+                required
+              />
             </v-col>
           </v-row>
 
@@ -79,29 +117,6 @@ const submitForm = () => {
               </v-radio-group>
             </v-col>
 
-            <!-- Trade Term -->
-            <v-col cols="12" md="6">
-              <v-select
-                label="Trade Term"
-                v-model="form.tradeTerm"
-                :items="[
-                  'Provide services and ensure',
-                  'The buyer\'s company receive the goods',
-                  'The buyer\'s company receive the goods and ensures that the acceptance is completed and ready for use',
-                  'Trade term + port name or country or designated place',
-                ]"
-
-                required
-              />
-            </v-col>
-          </v-row>
-
-          <v-row dense>
-            <!-- Payment Term -->
-            <v-col cols="12" md="6">
-              <v-text-field label="Payment Term" v-model="form.paymentTerm"  />
-            </v-col>
-
             <!-- Discount -->
             <v-col cols="12" md="6">
               <v-radio-group v-model="form.discount" row>
@@ -112,8 +127,8 @@ const submitForm = () => {
               <v-text-field
                 label="Discount Rate (%)"
                 v-model="form.discountRate"
-
                 type="number"
+                :rules="[rules.number]"
                 v-if="form.discount === 'yes'"
               />
             </v-col>
@@ -134,7 +149,16 @@ const submitForm = () => {
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="bg-primary rounded-xl" @click="submitForm">Submit</v-btn>
+        <v-btn
+          class="submit-btn bg-primary"
+          dark
+          large
+          elevation="3"
+          rounded
+          @click="submitForm"
+        >
+          Submit
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -144,5 +168,17 @@ const submitForm = () => {
 .v-card {
   max-width: 900px;
   margin: auto;
+}
+
+.submit-btn {
+  width: 15%;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: var(--v-primary-lighten1);
+  transform: scale(1.05);
 }
 </style>
