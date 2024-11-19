@@ -4,7 +4,7 @@ import Logo from "@/assets/images/pages/yihquan-logo.png";
 
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => !!authStore.token);
-const userName = computed(() => authStore.name); // Ambil nama pengguna dari store
+const userName = computed(() => authStore.username); // Ambil nama pengguna dari store
 
 const logout = () => {
   authStore.logout();
@@ -17,7 +17,7 @@ const logout = () => {
       <img :src="Logo" alt="Yih Quan" />
       <div class="nav">
         <v-btn to="/">Home</v-btn>
-        <v-btn to="/register">Register</v-btn>
+        <v-btn v-if="!isLoggedIn" to="/register">Register</v-btn>
         <v-btn v-if="!isLoggedIn" to="/login" variant="outlined">Login</v-btn>
         <template v-else>
           <!-- Informasi Pengguna -->
@@ -46,5 +46,6 @@ const logout = () => {
 .nav {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
 }
 </style>

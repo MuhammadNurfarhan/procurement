@@ -6,41 +6,41 @@ import { loginAPI, registerAPI } from '@/api/auth/auth';
 interface UserData {
   role: string;
   token: string;
-  name: string;
+  username: string;
 }
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
   const role = ref<string | null>(localStorage.getItem('role') || null);
   const token = ref<string | null>(localStorage.getItem('token') || null);
-  const name = ref<string| null>(localStorage.getItem('name') || null);
+  const username = ref<string| null>(localStorage.getItem('username') || null);
 
-  const setUserData = ({ token: newToken, role: newRole, name: newName }: UserData) => {
+  const setUserData = ({ token: newToken, role: newRole, username: newName }: UserData) => {
     role.value = newRole;
     token.value = newToken;
-    name.value = newName;
+    username.value = newName;
 
     localStorage.setItem('role', newRole);
     localStorage.setItem('token', newToken);
-    localStorage.setItem('name', newName);
+    localStorage.setItem('username', newName);
   };
 
   const clearUserData = () => {
     role.value = null;
     token.value = null;
-    name.value = null;
+    username.value = null;
 
     localStorage.removeItem('role');
     localStorage.removeItem('token');
-    localStorage.removeItem('name');
+    localStorage.removeItem('username');
   };
 
-  const register = (email: string, password: string, name: string) => {
-    if (!email || !password || !name) {
+  const register = (email: string, password: string, username: string) => {
+    if (!email || !password || !username) {
       throw new Error('Please fill in all fields');
     }
 
-    registerAPI({email, password, name})
+    registerAPI({email, password, username})
       .then((response) => {
         setUserData(response.data);
         router.push('/supplier-form');
@@ -57,7 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
       setUserData({
         token: response.data.token,
         role: response.data.role,
-        name: response.data.name,
+        username: response.data.username,
       });
       router.push('/');
     } catch (error) {
@@ -72,15 +72,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   const restoreUser = () => {
     const storedRole = localStorage.getItem('role');
-    const storedName = localStorage.getItem('name');
+    const storedName = localStorage.getItem('username');
     role.value = storedRole || null;
-    name.value = storedName || null;
+    username.value = storedName || null;
   };
 
   return {
     role,
     token,
-    name,
+    username,
     register,
     login,
     logout,

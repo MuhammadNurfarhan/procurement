@@ -11,7 +11,7 @@ const procurementStore = useProcurementStore();
 
 // Akses state dan aksi dari store
 const isLoggedIn = computed(() => !!authStore.token);
-const isUserRole = computed(() => authStore.role === 'user');
+const isUserRole = computed(() => authStore.role === 'User');
 const procurements = computed(() => procurementStore.procurements);
 
 const state = reactive({
@@ -35,7 +35,7 @@ const tableHeaders: any = [
 ];
 
 const openBidDialog = (procurementId: any) => {
-  if (!isLoggedIn.value && !isUserRole.value) {
+  if (isLoggedIn.value && isUserRole.value) {
     // Ambil data procurement berdasarkan ID
     const procurement = procurementStore.getProcurementById(procurementId);
 
@@ -91,11 +91,11 @@ onBeforeMount(() => {
       <v-tabs-window v-model="state.tab">
         <!-- Tab Pengadaan -->
         <v-tabs-window-item>
-          <v-btn color="primary" @click="handleCreateClick" class="btn-create">Create</v-btn>
+          <v-btn v-if="!isUserRole && isLoggedIn" color="primary" @click="handleCreateClick" class="btn-create">Create</v-btn>
           <v-data-table :items="activeProcurements" :headers="tableHeaders">
             <template v-slot:[`item.actions`]="{ item }">
-              <v-btn class="mr-2" color="success" v-if="!isUserRole && !isLoggedIn" @click="openBidDialog(item.id)">Bid</v-btn>
-              <span class="text-disabled mr-2" v-else>Login to Bid</span>
+              <v-btn class="mr-2" color="success" v-if="isUserRole && isLoggedIn" @click="openBidDialog(item.id)">Bid</v-btn>
+              <span class="text-disabled mr-2" v-else-if="!isLoggedIn || isUserRole">Login to Bid</span>
               <v-btn color="primary" :to="`/procurement/${item.id}`">Detail</v-btn>
             </template>
           </v-data-table>

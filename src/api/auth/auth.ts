@@ -3,7 +3,7 @@ import request from "@/utils/request";
 // Login API
 export const loginAPI = (data: any) => {
   return request({
-    url: "/api/v1/auth/login",
+    url: "/api/v1/auth",
     method: "post",
     data,
   });
