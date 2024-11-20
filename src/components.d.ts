@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     DialogBid: typeof import('./views/home/components/DialogBid.vue')['default']
     DialogProcurement: typeof import('./views/home/components/DialogProcurement.vue')['default']
+    Footer: typeof import('./components/Footer.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -23,10 +23,10 @@ const state = reactive({
       {
         "Name": "",
         "Specification": "",
-        "Quantity": 0,
+        "Quantity": "",
         "Unit": "",
         "Notes": "",
-        "attachment": null,
+        "Attachment": null,
       },
     ],
   },
@@ -46,6 +46,11 @@ const handleCancelClick = () => {
 };
 
 const handleSaveClick = () => {
+  if (!state.formData.Items || state.formData.Items.length === 0) {
+    alert("Please add at least one item.");
+    return;
+  }
+
   const formData = new FormData();
 
   formData.append('ProcurementName', state.formData.ProcurementName);
@@ -57,9 +62,11 @@ const handleSaveClick = () => {
     formData.append(`Items[${index}].Specification`, item.Specification);
     formData.append(`Items[${index}].Quantity`, item.Quantity.toString());
     formData.append(`Items[${index}].Unit`, item.Unit);
-    formData.append(`Items[${index}].Notes`, item.Notes);
-    if (item.attachment) {
-      formData.append(`Items[${index}].attachment`, item.attachment);
+    formData.append(`Items[${index}].Notes`, item.Notes || "");
+    if (item.Attachment instanceof File) {
+      formData.append(`Items[${index}].Attachment`, item.Attachment);
+    } else {
+      formData.append(`Items[${index}].Attachment`, "");
     }
   });
 
@@ -77,25 +84,29 @@ const handleSaveClick = () => {
 const handleFileUpload = (e: Event, index: number) => {
   const files = (e.target as HTMLInputElement).files;
   if (files && files[0] && state.formData.Items[index]) {
-    state.formData.Items[index].attachment = files[0];
+    state.formData.Items[index].Attachment = files[0];
   }
 };
 
 // Fungsi untuk menambahkan item baru
 const addItem = () => {
   state.formData.Items.push({
-    Name: '',
-    Specification: '',
-    Quantity: 0,
-    Unit: '',
-    Notes: '',
-    attachment: null,
+    "Name": "",
+    "Specification": "",
+    "Quantity": "",
+    "Unit": "",
+    "Notes": "",
+    "Attachment": null,
   });
 };
 
 // Fungsi untuk menghapus item tertentu berdasarkan indeks
 const removeItem = (index: number) => {
-  state.formData.Items.splice(index, 1);
+  if (state.formData.Items.length > 1) {
+    state.formData.Items.splice(index, 1);
+  } else {
+    alert("You must have at least one item.");
+  }
 };
 
 onBeforeMount(() => {
@@ -103,7 +114,7 @@ onBeforeMount(() => {
     state.formData = {...props.action.data};
   } else if (props.action.type === 'create') {
     state.formData = {
-      ...state.formData
+      ...state.formData,
     };
   }
 });
@@ -160,7 +171,6 @@ onBeforeMount(() => {
                 <v-text-field
                   v-model="item.Quantity"
                   label="Quantity"
-                  type="number"
                   variant="outlined"
                   color="primary"
                   required
@@ -185,7 +195,7 @@ onBeforeMount(() => {
               </v-col>
               <v-col cols="12" md="2">
                 <v-file-input
-                  v-model="item.attachment"
+                  v-model="item.Attachment"
                   label="Attachment (Images)"
                   @change="handleFileUpload"
                   accept="image/*"

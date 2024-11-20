@@ -64,8 +64,13 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
+    // host: '0.0.0.0',
+    // port: 3000,
+    // cors: true,
+    // open: true,
+
     host: '0.0.0.0',
-    port: 443,
+    port: 4433,
     cors: true,
     open: true,
     https: {
@@ -75,6 +80,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://192.168.111.9:8001',
+        // target: 'http://172.17.10.160:8001',
         changeOrigin: true,
       }
     }

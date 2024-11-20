@@ -2,14 +2,13 @@
 import { useRoute } from 'vue-router';
 import { useProcurementStore } from '@/stores/modules/procurementStore';
 import { useAuthStore } from '@/stores/modules/authStore';
-import Navbar from '@/components/Navbar.vue';
 
 const route = useRoute();
 const procurementStore = useProcurementStore();
 const authStore = useAuthStore();
 
 const procurement = ref(null);
-const isAdmin = ref(authStore.role === 'admin');
+const isAdmin = ref(authStore.role === 'Admin');
 
 const bidHeaders: any = [
   { title: 'Bid Amount', key: 'price' },
@@ -41,29 +40,28 @@ onMounted(async () => {
 
 <template>
   <v-container>
-    <Navbar />
     <v-card class="top">
       <v-card-title>Detail Pengadaan</v-card-title>
       <v-divider />
       <v-card-text v-if="procurement" class="pl-0">
-        <p><strong>Nama Pengadaan :</strong> {{ procurement.procurementName }}</p>
-        <p><strong>Tanggal Expired :</strong> {{ procurement.expirationDate }}</p>
+        <p><strong>Nama Pengadaan :</strong> {{ procurement.ProcurementName }}</p>
+        <p><strong>Tanggal Expired :</strong> {{ procurement.ExpirationDate }}</p>
 
         <!-- Daftar Item Pengadaan -->
-        <div v-if="procurement.items && procurement.items.length > 0">
+        <div v-if="procurement.Items && procurement.Items.length > 0">
           <h3>Daftar Item</h3>
-          <div v-for="(item, index) in procurement.items" :key="index">
+          <div v-for="(item, index) in procurement.Items" :key="index">
             <v-card class="mb-4" outlined>
               <v-card-title>Item {{ index + 1 }}</v-card-title>
               <v-card-text>
-                <p><strong>Name:</strong> {{ item.name }}</p>
-                <p><strong>Specification:</strong> {{ item.specification }}</p>
-                <p><strong>Quantity:</strong> {{ item.quantity }}</p>
-                <p><strong>Unit:</strong> {{ item.unit }}</p>
-                <p><strong>Notes:</strong> {{ item.notes }}</p>
-                <p v-if="item.attachment">
+                <p><strong>Name:</strong> {{ item.Name }}</p>
+                <p><strong>Specification:</strong> {{ item.Specification }}</p>
+                <p><strong>Quantity:</strong> {{ item.Quantity }}</p>
+                <p><strong>Unit:</strong> {{ item.Unit }}</p>
+                <p><strong>Notes:</strong> {{ item.Notes }}</p>
+                <p v-if="item.Attachment">
                   <strong>Attachment:</strong>
-                  <a :href="item.attachment" target="_blank">View Attachment</a>
+                  <a :href="item.Attachment" target="_blank">View Attachment</a>
                 </p>
               </v-card-text>
             </v-card>
@@ -77,9 +75,12 @@ onMounted(async () => {
         <div v-if="isAdmin && procurement.bids && procurement.bids.length > 0">
           <v-divider class="my-4" />
           <h3>Detail Bidding</h3>
-          <v-data-table :items="procurement.bids" :headers="bidHeaders">
+          <v-data-table
+            :items="procurement.bids"
+            :headers="bidHeaders"
+          >
             <template v-slot:[`item.selectBid`]="{ item }">
-              <v-btn color="primary" @click="selectBid(item)">Pilih</v-btn>
+              <v-btn class="bg-success" @click="selectBid(item)">Pilih</v-btn>
             </template>
           </v-data-table>
         </div>

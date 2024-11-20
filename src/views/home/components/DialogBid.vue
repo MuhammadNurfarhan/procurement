@@ -43,12 +43,11 @@ const handleSaveClick = () => {
 };
 
 onBeforeMount(() => {
-  console.log("Items:", props.action.data?.items);
   if (props.action.type === 'create' && props.action.data?.items) {
     // Inisialisasi formData items dengan item dari procurement
     state.formData.items = props.action.data.items.map((item: any) => ({
-      itemName: item.name,
-      unitPrice: 0,
+      itemName: item.Name,
+      price: 0,
       notes: '',
     }));
   } else {
@@ -66,7 +65,7 @@ onBeforeMount(() => {
         <v-form>
           <div v-for="(item, index) in state.formData.items" :key="index" class="mb-4">
             <v-text-field
-              v-model="item.unitPrice"
+              v-model="item.price"
               :label="`Harga per satuan untuk ${item.itemName}`"
               type="number"
               variant="outlined"
@@ -77,7 +76,6 @@ onBeforeMount(() => {
               v-model="item.notes"
               :label="`Catatan untuk ${item.itemName}`"
               variant="outlined"
-              rows="2"
               color="primary"
             />
           </div>

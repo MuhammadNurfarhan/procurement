@@ -3,7 +3,15 @@
 
 <template>
   <v-app>
-    <RouterView />
+    <v-app-bar app>
+      <Navbar />
+    </v-app-bar>
+    
+    <v-main>
+      <RouterView />
+    </v-main>
+
+    <Footer />
   </v-app>
 </template>
 

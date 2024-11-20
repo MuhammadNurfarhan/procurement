@@ -2,12 +2,12 @@ import { defineStore } from 'pinia';
 import { getProcurementAPI, acceptBidAPI } from '@/api/procurement/procurement';
 
 interface Item {
-  name: string;
-  specification: string;
-  quantity: number;
-  unit: string;
-  notes?: string;
-  attachment?: string;
+  Name: string;
+  Specification: string;
+  Quantity: string;
+  Unit: string;
+  Notes?: string;
+  Attachment?: string;
 }
 
 interface Bid {
@@ -19,12 +19,12 @@ interface Bid {
 
 interface Procurement {
   id: string;
-  procurementName: string;
-  expirationDate: string;
-  description?: string;
-  items: Item[];
+  ProcurementName: string;
+  ExpirationDate: string;
+  Description?: string;
+  Items: Item[];
   bids?: Bid[];
-  status: boolean;
+  status: string;
 }
 
 export const useProcurementStore = defineStore('procurement', () => {
@@ -42,16 +42,15 @@ export const useProcurementStore = defineStore('procurement', () => {
       if (response.data && response.data.length > 0) {
         procurements.value = response.data.map((item: any) => ({
           id: item.ID,
-          procurementName: item.ProcurementName,
-          expirationDate: item.ExpirationDate,
-          status: item.status !== 'ACTIVE',
-          items: item.Items.map((detail: any) => ({
-            name: detail.Name,
-            specification: detail.Specification,
-            quantity: detail.Quantity,
-            unit: detail.Unit,
-            notes: detail.Notes,
-            attachment: detail.Attachment || null,
+          ProcurementName: item.ProcurementName || "",
+          ExpirationDate: item.ExpirationDate || "",
+          Items: item.Items.map((detail: any) => ({
+            Name: detail.Name || "",
+            Specification: detail.Specification || "",
+            Quantity: detail.Quantity || "",
+            Unit: detail.Unit || "",
+            Notes: detail.Notes || "",
+            Attachment: detail.Attachment || null,
           })),
         }));
       }
@@ -63,7 +62,7 @@ export const useProcurementStore = defineStore('procurement', () => {
   // Action untuk menutup pengadaan berdasarkan ID
   const closeProcurement = (id: any) => {
     const procurement = procurements.value.find(p => p.id === id);
-    if (procurement) procurement.status = true;
+    if (procurement) procurement.status = "INACTIVE";
   };
 
   const getProcurementById = (id: any): Procurement | undefined => {
@@ -83,7 +82,7 @@ export const useProcurementStore = defineStore('procurement', () => {
           procurement.bids.forEach(bid => {
             bid.selected = bid.id === bidId; // Mark the selected bid
           });
-          procurement.status = true; // Close the procurement if desired
+          procurement.status = "INACTIVE"; // Close the procurement if desired
         }
       }
     } catch (error) {

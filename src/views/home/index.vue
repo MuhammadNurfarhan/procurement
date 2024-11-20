@@ -3,7 +3,6 @@ import { useAuthStore } from '@/stores/modules/authStore';
 import { useProcurementStore } from '@/stores/modules/procurementStore';
 import DialogProcurement from './components/DialogProcurement.vue';
 import DialogBid from './components/DialogBid.vue';
-import Navbar from '@/components/Navbar.vue';
 
 // Inisialisasi store
 const authStore = useAuthStore();
@@ -29,8 +28,8 @@ const state = reactive({
 })
 
 const tableHeaders: any = [
-  { title: 'Request Name', key: 'procurementName' },
-  { title: 'Expired Date', key: 'expirationDate' },
+  { title: 'Request Name', key: 'ProcurementName' },
+  { title: 'Expired Date', key: 'ExpirationDate' },
   { title: 'Action', key: 'actions', sortable: false },
 ];
 
@@ -41,7 +40,7 @@ const openBidDialog = (procurementId: any) => {
 
     if (procurement) {
       state.bidDialogData.id = procurementId;
-      state.bidDialogData.items = procurement.items; // Tambahkan items ke bidDialogData
+      state.bidDialogData.items = procurement.Items; // Tambahkan items ke bidDialogData
       state.showBidDialog = true;
     }
   }
@@ -56,12 +55,12 @@ const handleCreateClick = () => {
 // Filter pengadaan yang sudah expired
 const expiredProcurements = computed(() => {
   const currentDate = new Date().toISOString().split('T')[0];
-  return procurements.value.filter(item => item.expirationDate < currentDate);
+  return procurements.value.filter(item => item.ExpirationDate < currentDate);
 });
 
 const activeProcurements = computed(() => {
   const currentDate = new Date().toISOString().split('T')[0];
-  return procurements.value.filter(item => item.expirationDate >= currentDate);
+  return procurements.value.filter(item => item.ExpirationDate >= currentDate);
 })
 
 const handleDialogClose = () => {
@@ -81,8 +80,7 @@ onBeforeMount(() => {
 
 <template>
   <v-container>
-    <Navbar />
-    <v-card class="top">
+    <v-card>
       <v-tabs v-model="state.tab" align-tabs="center" color="deep-purple-accent-4">
         <v-tab>Pengadaan (Invitation for Bid)</v-tab>
         <v-tab>Pengumuman Pengadaan (Announcement of Successful Bid)</v-tab>
@@ -130,9 +128,6 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-.top {
-  margin-top: 70px;
-}
 
 .btn-create {
   float: right;
