@@ -23,6 +23,13 @@ const form = ref({
   discount: '',
   discountRate: null,
   taxRate: '',
+  documents: {
+    nib: null, // Dokumen NIB
+    npwp: null, // Dokumen NPWP
+    suratPkp: null, // Surat PKP/Non PKP
+    rekeningKoran: null, // Scan rekening koran
+    suratPernyataan: null, // Surat pernyataan
+  },
 });
 
 const tradeTermOption: any = [
@@ -36,6 +43,7 @@ const rules = {
   required: (value: string) => !!value || 'This field is required',
   email: (value: string) => /.+@.+\..+/.test(value) || 'E-mail must be valid',
   number: (value: string) => /^\d+$/.test(value) || 'Must be a valid number',
+  file: (value: File | null) => !!value || 'File is required',
 };
 
 const formRef = ref(null);
@@ -46,6 +54,13 @@ const submitForm = () => {
     alert('Form submitted successfully!');
   } else {
     alert('Please fix all errors before submitting.');
+  }
+};
+
+const handleFileUpload = (e: Event, docKey: string) => {
+  const files = (e.target as HTMLInputElement).files;
+  if (files && files[0]) {
+    form.value.documents[docKey] = files[0];
   }
 };
 </script>
@@ -143,6 +158,53 @@ const submitForm = () => {
                 <v-radio label="VAT Included" value="vat-included" />
                 <v-radio label="Zero-Tax-Rate" value="zero-tax-rate" />
               </v-radio-group>
+            </v-col>
+          </v-row>
+
+          <!-- Kelengkapan Dokumen -->
+          <v-row dense>
+            <v-col cols="12" class="mt-5">
+              <h5>Kelengkapan Dokumen</h5>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-file-input
+                label="NIB"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                @change="handleFileUpload($event, 'nib')"
+                :rules="[rules.file]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-file-input
+                label="NPWP"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                @change="handleFileUpload($event, 'npwp')"
+                :rules="[rules.file]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-file-input
+                label="Surat PKP/Non PKP"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                @change="handleFileUpload($event, 'suratPkp')"
+                :rules="[rules.file]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-file-input
+                label="Scan Rekening Koran Bank"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                @change="handleFileUpload($event, 'rekeningKoran')"
+                :rules="[rules.file]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-file-input
+                label="Surat Pernyataan"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                @change="handleFileUpload($event, 'suratPernyataan')"
+                :rules="[rules.file]"
+              />
             </v-col>
           </v-row>
         </v-form>
