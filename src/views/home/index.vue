@@ -80,7 +80,8 @@ onBeforeMount(() => {
 
 <template>
   <v-container>
-    <v-card>
+    <Navbar />
+    <v-card class="top">
       <v-tabs v-model="state.tab" align-tabs="center" color="deep-purple-accent-4">
         <v-tab>Pengadaan (Invitation for Bid)</v-tab>
         <v-tab>Pengumuman Pengadaan (Announcement of Successful Bid)</v-tab>
@@ -110,6 +111,7 @@ onBeforeMount(() => {
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card>
+    <Footer />
 
     <DialogProcurement
       v-if="state.showDialog"
@@ -128,7 +130,9 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-
+.top {
+  margin-top: 70px;
+}
 .btn-create {
   float: right;
   margin: 10px;

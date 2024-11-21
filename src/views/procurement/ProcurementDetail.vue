@@ -40,6 +40,7 @@ onMounted(async () => {
 
 <template>
   <v-container>
+    <Navbar />
     <v-card class="top">
       <v-card-title>Detail Pengadaan</v-card-title>
       <v-divider />
@@ -90,6 +91,7 @@ onMounted(async () => {
       </v-card-text>
       <v-btn to="/" color="primary">Back</v-btn>
     </v-card>
+    <Footer />
   </v-container>
 </template>
 

@@ -19,6 +19,7 @@ const state = reactive({
   formData: {
     "ProcurementName": "",
     "ExpirationDate": null,
+    "Description": "",
     "Items": [
       {
         "Name": "",
@@ -55,6 +56,7 @@ const handleSaveClick = () => {
 
   formData.append('ProcurementName', state.formData.ProcurementName);
   formData.append('ExpirationDate', state.formData.ExpirationDate);
+  formData.append('Description', state.formData.Description);
 
 
   state.formData.Items.forEach((item, index) => {
@@ -131,6 +133,13 @@ onBeforeMount(() => {
           <v-text-field
             v-model="state.formData.ProcurementName"
             label="Procurement Name"
+            variant="outlined"
+            color="primary"
+            required
+          />
+          <v-text-field
+            v-model="state.formData.Description"
+            label="Description"
             variant="outlined"
             color="primary"
             required

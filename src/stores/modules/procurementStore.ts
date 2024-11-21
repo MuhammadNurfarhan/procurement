@@ -44,6 +44,7 @@ export const useProcurementStore = defineStore('procurement', () => {
           id: item.ID,
           ProcurementName: item.ProcurementName || "",
           ExpirationDate: item.ExpirationDate || "",
+          Description: item.Description || "",
           Items: item.Items.map((detail: any) => ({
             Name: detail.Name || "",
             Specification: detail.Specification || "",
