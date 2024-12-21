@@ -4,7 +4,7 @@ import { filterAsyncRoutes } from "@/utils/routes";
 
 export const useRouteStore = defineStore("route", {
   state: () => ({
-    routes: [],
+    routes: [] as VueRouter.RouteRecordRaw[], // tambahkan tipe data VueRouter.RouteRecordRaw[]
   }),
 
   getters: {},

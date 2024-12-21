@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+type DocumentType = { [key: string]: File | null };
+
 const form = ref({
   companyName: '',
   companyAddress: '',
@@ -29,7 +31,7 @@ const form = ref({
     suratPkp: null, // Surat PKP/Non PKP
     rekeningKoran: null, // Scan rekening koran
     suratPernyataan: null, // Surat pernyataan
-  },
+  } as DocumentType,
 });
 
 const tradeTermOption: any = [

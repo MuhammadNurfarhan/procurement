@@ -7,9 +7,9 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
-import { readFileSync } from 'fs';
+// import { readFileSync } from 'fs';
 
-import mkcert from 'vite-plugin-mkcert'
+// import mkcert from 'vite-plugin-mkcert'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -54,7 +54,7 @@ export default defineConfig({
         ],
       },
     }),
-    mkcert(),
+    // mkcert(),
   ],
   define: { 'process.env': {} },
   resolve: {
@@ -64,26 +64,25 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
-    // host: '0.0.0.0',
-    // port: 3000,
-    // cors: true,
-    // open: true,
-
     host: '0.0.0.0',
-    port: 4433,
+    port: 3000,
     cors: true,
     open: true,
-    https: {
-      key: readFileSync('key.pem'),
-      cert: readFileSync('cert.pem'),
-    },
-    proxy: {
-      '/api': {
-        target: 'http://192.168.111.9:8001',
-        // target: 'http://172.17.10.160:8001',
-        changeOrigin: true,
-      }
-    }
+
+    // host: '0.0.0.0',
+    // port: 4433,
+    // cors: true,
+    // open: true,
+    // https: {
+    //   key: readFileSync('key.pem'),
+    //   cert: readFileSync('cert.pem'),
+    // },
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://192.168.111.9:8001',
+    //     changeOrigin: true,
+    //   }
+    // }
   },
   build: {
     target: 'es2015',
